@@ -1,17 +1,36 @@
 from random import randrange
 
-def roll(dice:int) -> int:
+
+def roll(dice: int) -> int:
     return randrange(1, dice)
 
-def roll_atribute() -> int:
-    rolls = [roll(6) for _ in range(4)]
-    atribute = sum(rolls) - min(rolls)
+
+def roll_atribute(
+    number_of_rolled_dice: int = 4,
+    max_dice: bool = True,
+    number_of_sum_dice: int = 3,
+    dice_roll: int = 6,
+) -> int:
+    rolls = [roll(dice_roll) for _ in range(number_of_rolled_dice)]
+    rolls.sort(reverse=max_dice)
+    atribute = sum(rolls[:number_of_sum_dice])
     return atribute
 
-def roll_pool(pool:dict) -> int:
+
+def roll_pool(pool: list | dict) -> int:
+    if type(pool) == dict:
+        pool = pool_dict_to_list(pool)
+    
     rolls = 0
-    for dice, amuont in pool.items():
-            for _ in range(amuont):
-                rolls += roll(int(dice))
+    for dice in pool:
+        rolls += roll(dice)
 
     return rolls
+
+
+def pool_dict_to_list(dict_pool: dict)->list:
+    list_pool = []
+    for dice, amuont in dict_pool.items():
+        list_pool +=  [dice] * amuont
+
+    return list_pool

@@ -9,7 +9,7 @@ class SavingThrow:
     intelligence :int
     charisma : int
 
-    def __str__(self):
+    def __str__(self) -> str:
         strings = [f'strength : {self.strength}',
                    f'dexterity : {self.dexterity}',
                    f'constitution : {self.constitution}',

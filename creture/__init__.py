@@ -1,2 +1,2 @@
-from creture import Creture
-from player import Player
+from .creture import Creture
+from .Player import Player

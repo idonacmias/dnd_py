@@ -9,52 +9,64 @@ from lib import roll, roll_pool
 
 
 class Hp:
-    #need to add a player short rest
-    #need to add a bard song of rest?
-    
     def __init__(self, player):
         self.player = player
-        self.rolled_hp = self.roll_hp_dice()
-        self.true_max_hp = self.culculate()
+        self.true_max_hp = self.culculate_first_hp()
         self.temp_max_hp = self.true_max_hp
         self.temp_hp = self.true_max_hp
         self.unused_hit_dice = self.player.hit_dice
 
-    def roll_hp_dice(self, dice=0):
-        if not dice:
-            res = roll_pool(self.player.hit_dice)
-
-        else:
-            res = roll(dice)
+    def first_roll(self, dice=0) -> int:
+        res = roll_pool(self.player.hit_dice[1:])  
+        res += self.player.hit_dice[0]
 
         return res
 
-    def culculate(self, misc=0) -> int:
-        amuont_of_hit_dice = sum([amuont for amuont in self.player.hit_dice.values()])
-        max_hp = (amuont_of_hit_dice * self.player.atributes.constitution.mod) 
-        max_hp += self.rolled_hp
+    def culculate_first_hp(self, misc=0) -> int:
+        rolled_hp = self.first_roll()
+        max_hp = (len(self.player.hit_dice) * self.player.atributes.constitution.mod) 
+        max_hp += rolled_hp
         max_hp += misc
         return max_hp
     
-    def long_rest(self):
+    def long_rest(self)-> None:
         self.temp_hp = self.temp_max_hp
         self.unused_hit_dice = self.player.hit_dice
 
-    def level_up(self, dice):
-        new_roll = self.roll_hp_dice(dice)
+    def short_rest(self, hit_dice:dict)-> None:
+        if self.is_equle_or_under(hit_dice):
+            self.add_hp(hit_dice)
+            self.unused_hit_dice = self.subtract_hit_dice(hit_dice)
+
+    def is_equle_or_under(self, hit_dice) -> bool:
+        for dice in set(hit_dice):
+            if hit_dice.count(dice) > self.unused_hit_dice.count(dice):
+                print('\n\ninvalid hit dice pool\n\n')
+                return False
+
+        return True
+
+    def add_hp(self, dice_pool={}, misc=0) -> None:
+        #shuled not update dice_pool while dice_pool empty!!!
+        hp_regenerate = roll_pool(dice_pool) + misc
+        self.temp_hp += hp_regenerate
+        if self.temp_hp > self.temp_max_hp: 
+            self.temp_hp = self.temp_max_hp
+
+    def subtract_hit_dice(self, dice_pool) -> None:
+        return [i for i in self.unused_hit_dice if not i in dice_pool or dice_pool.remove(i)]
+
+    def level_up(self, dice) -> None:
+        new_roll = roll(dice)
         added_hp = new_roll + self.player.atributes.constitution.mod
         self.true_max_hp += added_hp
         self.temp_max_hp += added_hp
-        try:
-            self.player.hit_dice[str(dice)] += 1
+        self.unused_hit_dice = self.player.hit_dice
+        self.player.hit_dice.append(dice)
 
-        except KeyError:
-            self.player.hit_dice.update({str(dice) : 1})
-
-
-    def __str__(self):
+    def __str__(self) -> str:
         strings = [f'ture_max_hp: {self.true_max_hp}',
                    f'temp_max_hp: {self.temp_max_hp}',
-                   f'temp_hp: {self.temp_hp}']
+                   f'temp_hp: {self.temp_hp}', 
+                   f'unused_hit_dice: {self.unused_hit_dice}']
         return '\n'.join(strings)
-
