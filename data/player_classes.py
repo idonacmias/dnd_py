@@ -1,6 +1,11 @@
-player_classes = {'artificer' : {'saving_throw_pro' : ('constitution', 'intelligence'),
-                                 'hit_dice' : 8},
-
+player_classes = {'artificer' : {'hit_dice' : 8,
+                                 'proficiencies' : {'saving_throw' : ('intelligence', 'constitution'),
+                                                    'skills_options' : ['arcana', 'history', 'investigation', 'medicine', 'nature', 'perception', 'sleight of hand'],
+                                                    'skill_pro_point' : 2,
+                                                    'tools' : [ 'thieves’ tools', 'tinker’s tools', 'one type of artisan’s tools of your choic'],
+                                                    'weapons' : ['simple weapons'],
+                                                    'armor' : ['light armor', 'medium armor', 'shileds']},
+                                },
                   'barbarian' : {'hit_dice' : 12,
                                  'proficiencies' : {'saving_throw' : ('strength', 'constitution'),
                                                     'skills_options' : ['animal handling', 'athletics', 'intimidation', 'nature', 'perception', 'survival'],
@@ -10,8 +15,15 @@ player_classes = {'artificer' : {'saving_throw_pro' : ('constitution', 'intellig
                                                     'armor' : ['light armor', 'medium armor', 'shileds']}
                                 },
 
-                  'bard' : {'saving_throw_pro' : ('dexterity', 'charisma'),
-                            'hit_dice' : 8},
+                  'bard' : {'hit_dice' : 8,
+                            'proficiencies' : {'saving_throw_pro' : ('dexterity', 'charisma'),
+                                                   'skills_options' : ['*'],
+                                                    'skill_pro_point' : 3,
+                                                    'tools' : ['Three musical instruments of your choice'],
+                                                    'weapons' : ['simple weapons', 'hand crossbows', 'longswords', 'rapiers', 'shortswords'],
+                                                    'armor' : ['light armor']}
+                                },
+
                   'cleric' : {'saving_throw_pro' : ('wisdom', 'charisma'),
                               'hit_dice' : 8},
                   'druid' : {'saving_throw_pro' : ('intelligence', 'wisdom'),

@@ -1,5 +1,6 @@
 hit_dice = [
     12,
+    12,
 ]
 speed = 30
 saving_throw_pro = [
@@ -7,39 +8,3 @@ saving_throw_pro = [
     "constitution",
 ]
 conditions = []
-proficiency_bonuse = 2
-ac = 11
-first_player_class = "barbarian"
-death_saving_throw_succsess = 0
-death_saving_throw_failers = 0
-atributes = [
-    1,
-    2,
-    -3,
-    1,
-    2,
-    -2,
-]
-
-[skill_pro]
-history = 1
-athletics = 2
-
-[race]
-speed = 30
-size = "medium"
-
-[race.atribute_bonus]
-dexterity = 2
-charisma = 1
-
-[player_class]
-barbarian = 1
-
-[hp]
-true_max_hp = 9
-temp_max_hp = 9
-temp_hp = 9
-unused_hit_dice = [
-    12,
-]

@@ -4,26 +4,27 @@ from random import randrange
 def roll(dice: int) -> int:
     return randrange(1, dice)
 
+def roll_with_adventage(dice: int=20, advantage: int=2, dis: bool=False) -> int:
+    rolls = [roll(dice) for _ in advantage]
+    if dis: 
+        score = min(rolls)
 
-def roll_atribute(
-    number_of_rolled_dice: int = 4,
-    max_dice: bool = True,
-    number_of_sum_dice: int = 3,
-    dice_roll: int = 6,
-) -> int:
-    rolls = [roll(dice_roll) for _ in range(number_of_rolled_dice)]
-    rolls.sort(reverse=max_dice)
-    atribute = sum(rolls[:number_of_sum_dice])
-    return atribute
+    else: 
+        score = max(rolls)
 
+    return score 
 
-def roll_pool(pool: list | dict) -> int:
-    if type(pool) == dict:
+def roll_pool(pool: list | dict, reroll_one: bool=False) -> int:
+    if isinstance(pool, dict):
         pool = pool_dict_to_list(pool)
     
     rolls = 0
     for dice in pool:
-        rolls += roll(dice)
+        dice_roll = roll(dice)
+        if reroll_one and dice_roll == 1:
+            dice_roll = roll(dice)
+
+        rolls += dice_roll
 
     return rolls
 

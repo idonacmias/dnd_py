@@ -9,34 +9,62 @@ from pathlib import Path
 filepath = Path(__file__)
 filepath = filepath.parent.parent
 sys.path.insert(0, str(filepath))
-from lib import roll, roll_atribute, roll_pool
 from items import Inventory
 
 class Creture:
+##########################initialization##########################
 
-    def __init__(self, hit_dice: list, speed: int, saving_throw_pro: tuple, items: list, skill_pro: dict={}, atributes: tuple=()):
+    def __init__(self, 
+                 hit_dice: list, 
+                 speed: int, 
+                 saving_throw_pro: tuple, 
+                 inventory: list=[], 
+                 skill_pro: dict={}, 
+                 atributes: AtributeSet | list | tuple=(), 
+                 hp: dict | None=None,
+                 arrmor: dict | None=None
+    ):
+
         self.atributes = Creture.set_atributes(atributes)
         self.hit_dice = hit_dice 
         self.speed = speed
         self.saving_throw_pro = saving_throw_pro
-        self.hp = Hp(self)
+        self.hp = Hp(self, load=hp)
         self.conditions = []
-        self.proficiency_bonuse = 2
-        self.ac = 10 + self.atributes.dexterity.mod 
-        self.inventory = Creture.create_inventory(items)
+        self.inventory = Inventory(*inventory)
         self.skill_pro = skill_pro
         self.skills = self.create_skills()
-        
+        self.arrmor = arrmor        
+
     def set_atributes(atributes):
-        if (type(atributes) == tuple and
-            int == type(atribute)for atribute in atributes):
+        if (Creture.is_atributes_of_type(atributes) and
+            Creture.is_atributes_is_ints(atributes) and
+            len(atributes) == 6):
+            
             return AtributeSet(*(Atribute(atribute) for atribute in atributes))
         
-        elif type(atributes) == AtributeSet:
+        elif isinstance(atributes, AtributeSet):
             return atributes
         
         else:
             print('atribute must be from type tuple with int  or AtributeSet')
+
+    @staticmethod
+    def is_atributes_of_type(atributes) -> bool:
+        return (isinstance(atributes, tuple) or
+                isinstance(atributes, list)) 
+
+    @staticmethod
+    def is_atributes_is_ints(atributes) -> bool:
+        for atribute in atributes:
+            if not isinstance(atribute, int):
+                return False
+
+        return True 
+
+    @property
+    def proficiency_bonuse(self) -> int:
+        return 2
 
     @property
     def initiative(self) -> int:
@@ -51,21 +79,34 @@ class Creture:
         
         return saving_throw
 
-    @staticmethod
-    def create_inventory(items) -> Inventory:
-        items_set = Inventory(*items) 
-        return items_set
+    @property
+    def ac(self):
+        base_bonus = 10
+        dex_bonus = self.atributes.dexterity.mod
+        if self.arrmor:
+            base_bonus = self.arrmor['ac']
+            if not self.arrmor['plus_dex']:
+                dex_bonus = 0
+
+            elif self.arrmor['max_dex']:
+                dex_bonus = min(self.atributes.dexterity.mod, self.arrmor['max_dex']) 
+                    
+
+        self._ac = base_bonus + dex_bonus 
+        return self._ac 
 
     def create_skills(self) -> SkillSet:
         skills = SkillSet(self, *all_skills)
         for skill in self.skill_pro:
             skill = getattr(skills, skill)
-            if skill.pro_level < 1: skill.pro_level = 1
+            if skill.pro_level < 1:
+                skill.pro_level = 1
 
         return skills
 
     def __str__(self) -> str:
         string = [f'atributes:\n{self.atributes}',
+                  f'proficiency_bonuse:{self.proficiency_bonuse}',
                   f'saving_throw:\n{self.saving_throw}',
                   f'ac: {self.ac}',
                   f'hp:\n{self.hp}',
@@ -74,17 +115,8 @@ class Creture:
 
         return '\n\n'.join(string)
 
+##########################game functionality##########################
+
     def long_rest(self) -> None:
         self.hp.long_rest()
         self.constitutions = []
-
-
-if __name__ == '__main__':
-    print('not warking du to import reletive path')
-    creture = Creture(hit_dice=[8, 8],
-                      speed=30,
-                      atributes=(20,10,10,10,10,10),
-                      saving_throw_pro=('strength', 'dexterity'),
-                      items=[['Item', 'potion', 1, 1, 1],['Weapone', 'club', 1, 2, {'sp' : 1}, {'bludgeoning' : 4}, ['light'], 'simple melee weapon']])
-    print(creture)
-    print(creture.inventory.weapone_set)

@@ -1,86 +1,51 @@
-from .item import Item, Weapone, Potion
-
-class AbstractSet:
+class Inventory():
     def __init__(self, *items):
+        self.inventory_set = {}
+        self.weapone_set = {}
+        self.item_set = {}
+        self.potion_set = {}
+        self.arrmor_set = {}
         for item in items:
-            setattr(self, item.name, item)
+            self.add_new_item(item)
 
-    def __len__(self):
-        return len(self.__dict__)
+    def add_new_item(self, item: dict):
+        set_dict = self.item_sorter(item)
+        self.add_item_to_set(set_dict, item)
+        self.inventory_set.update(**set_dict)
 
-    def __iter__(self):
-        return self
+    def item_sorter(self, item: dict) -> dict:
+            item_type = item['item_type']
+            if item_type == 'Item':
+                return self.item_set
+        
+            elif item_type == 'Weapone':
+                return self.weapone_set
 
-    def __next__(self):
-        yield self.__dict__.values()
+            elif item_type == 'Potion':
+                return self.potion_set
 
-    def __str__(self):
-        return '\n'.join([str(item) for item in self.__dict__.values()])
-
-class WeaponeSet(AbstractSet):
-    def __str__(self):
-        string = 'weapones:\n'
-        old_string = super().__str__()
-        return string + old_string
-
-
-class ItemSet(AbstractSet):
-    def __str__(self):
-        string = 'items:\n'
-        old_string = super().__str__()
-        return string + old_string
-
-
-class PotionSet(AbstractSet):
-    
-    def __str__(self):
-        string = 'potions:\n'
-        old_string = super().__str__()
-        return string + old_string
-
-
-class Inventory(AbstractSet):
-    def __init__(self, *items):
-        weapone_set = []
-        item_set = []
-        potion_set = []
-
-        for item in items:
-            new_item = Inventory.item_factory(item)
-            if type(new_item) == Weapone:
-                weapone_set.append(new_item)
-
-            elif type(new_item) == Item:
-                item_set.append(new_item)
-
-            elif type(new_item) == Potion:
-                potion_set.append(new_item)
+            elif item_type == 'Arrmor':
+                return self.arrmor_set
 
             else:
-                print(f'undefine type of item: \n{item}')
+                print(f'not a valid category: {item_type}')
 
-        else:
-            self.weapone_set = WeaponeSet(*weapone_set)
-            self.item_set = ItemSet(*item_set)
-            self.potion_set = PotionSet(*potion_set)
+    def add_item_to_set(self, set_dict, item : dict) -> dict:
+        try:
+            set_dict[item['name']]['amuont'] += 1
 
-   
-    @staticmethod
-    def item_factory(item) -> Item|Weapone|Potion:
-        if item[0] == 'Item':
-            return Item(*item[1:])
-    
-        elif item[0] == 'Weapone':
-            return Weapone(*item[1:])
-        
-        elif item[0] == 'Potion':
-            return Potion(*item[1:])
+        except KeyError:
+            set_dict.update({item['name'] : item})
 
     def __str__(self):
-        string = 'items:\n'
-        old_string = super().__str__()
-        return string + old_string
+        header = 'Inventory:\n'
+        content = '\n'.join([Inventory.dict_to_string(item) for item in self.inventory_set.values()])
+        return header + content
 
-
-
-
+    @staticmethod
+    def dict_to_string(my_dict: dict) -> str:
+        string = [f'{key}: {val}' for key, val in my_dict.items()]
+        return '\n' +'\n'.join(string)
+    
+    def order_data_to_saved(self):
+        return list(self.inventory_set.values())

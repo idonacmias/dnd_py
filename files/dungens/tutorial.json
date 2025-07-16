@@ -1,0 +1,17 @@
+{"start" :  {"conected_path" : ["room_1", "room_2"],
+             "discription_options" : {"val_1" : "hp",
+                                      "operetor" : ">",
+                                      "val_2" : 10,
+                                      "multipul answ" : "one fail",
+                                      "if" : "start room discription if",
+                                      "else" : "start room discription else"}},
+
+ "room_1" : {"conected_path" : ["start", "room_3"],
+             "discription_options" : "room_1 discription"},   
+
+ "room_2" : {"conected_path" : ["start", "room_3"],
+             "discription_options" : "room_2 discription"},
+
+ "room_3" : {"conected_path" : ["room_1", "room_2"],  
+             "discription_options" : "room_3 discription"}
+}

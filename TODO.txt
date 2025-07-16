@@ -1,0 +1,15 @@
+items:
+
+    arrmor ac  
+        ?change in creture?
+
+creture:
+    items holeds (arremor, weapons)
+
+player class:
+    finish data 
+
+    features
+        ?inheritance 
+        ?proparty with player_class level chack
+        
