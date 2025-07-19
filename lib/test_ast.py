@@ -112,9 +112,9 @@ def test_handel_ast_put(state):
     assert state['players'].hp.true_max_hp == 200
 
 
-def test_handel_ast_add_to_inventory(state):
-    ast = {'=' : {'object' : 'players>inventory>weapone_set',
-                  'val' : {'leaf' : {'item_type' : 'Weapone', 
+def test_handel_ast_func_add_to_inventory(state):
+    ast = {'func' : {'object' : 'players>inventory>add_new_item',
+                     'val_1' : {'leaf' : {'item_type' : 'Weapone', 
                                           'name' : 'battleaxe',
                                           'amuont' : 2, 
                                           'weight' : {'lb': 4}, 
@@ -125,7 +125,6 @@ def test_handel_ast_add_to_inventory(state):
                                          }
                   }
           }
-          
     handel_ast(ast, state)
     assert state['players'].inventory.weapone_set['battleaxe']['amuont'] == 2
 

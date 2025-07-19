@@ -14,6 +14,9 @@ def handel_ast(ast, state):
         put_data(ast, state)
         val = None
 
+    elif 'func' in ast:
+        val = activate_func(ast['func'], state)
+
     return val
 
 def handel_if(ast, state):
@@ -110,3 +113,19 @@ def put_data(ast, state) -> None:
     
     setattr(my_object, paths[-1], val)
 
+def activate_func(ast, state):
+    object_name, *paths = ast['object'].split('>')
+    vals = []
+    for name in ast:
+        if name != 'object':
+            val = handel_ast(ast[name], state)
+            vals.append(val)
+
+    my_object = state[object_name]
+    my_object = reduce(getattr,
+                       paths[:1],
+                       my_object)
+
+    foo = getattr(my_object, paths[-1])
+    val = foo(*vals)
+    return  val
