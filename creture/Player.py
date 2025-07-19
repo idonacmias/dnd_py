@@ -127,8 +127,8 @@ class Player(Creture):
         return all_data
 
     @staticmethod
-    def load_from_file(file_name=123):
-        path = f"files/players/{123}.json"
+    def load_from_file(file_name='test'):
+        path = f"files/players/{file_name}.json"
         with open(path, "r") as f:
             data = json.load(f)
         
